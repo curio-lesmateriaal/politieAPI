@@ -62,30 +62,58 @@
     <!-- Endpoints Section -->
     <section class="container mb-5">
         <h3 class="fw-bold text-primary mb-4">Voorbeeld Endpoints</h3>
+        
+        <div class="alert alert-info mb-4" role="alert">
+            <strong>🔐 Authenticatie vereist:</strong> Alle endpoints vereisen een API key in de <code>X-API-Key</code> header.
+        </div>
 
         <div class="row g-4">
             <div class="col-md-6">
                 <div class="bg-white p-4 rounded shadow border-police">
-                    <h4 class="fw-semibold mb-2">Casus Overzicht</h4>
-                    <p>Haal een lijst op van lopende en afgesloten zaken.</p>
-                    <pre class="bg-light p-3 rounded"><code>GET /api/cases</code></pre>
+                    <h4 class="fw-semibold mb-2">Onderzoeken Overzicht</h4>
+                    <p>Haal een lijst op van alle onderzoeken.</p>
+                    <pre class="bg-light p-3 rounded"><code>GET /api/investigations</code></pre>
                 </div>
             </div>
 
             <div class="col-md-6">
                 <div class="bg-white p-4 rounded shadow border-police">
-                    <h4 class="fw-semibold mb-2">Getuigen</h4>
-                    <p>Bekijk geregistreerde getuigen bij een specifieke zaak.</p>
-                    <pre class="bg-light p-3 rounded"><code>GET /api/cases/{id}/witnesses</code></pre>
+                    <h4 class="fw-semibold mb-2">Onderzoek Details</h4>
+                    <p>Haal details op van een specifiek onderzoek.</p>
+                    <pre class="bg-light p-3 rounded"><code>GET /api/investigations/{id}</code></pre>
                 </div>
             </div>
 
             <div class="col-md-6">
-
+                <div class="bg-white p-4 rounded shadow border-police">
+                    <h4 class="fw-semibold mb-2">Getuigen Overzicht</h4>
+                    <p>Haal een lijst op van alle geregistreerde getuigen.</p>
+                    <pre class="bg-light p-3 rounded"><code>GET /api/witnesses</code></pre>
+                </div>
             </div>
 
             <div class="col-md-6">
+                <div class="bg-white p-4 rounded shadow border-police">
+                    <h4 class="fw-semibold mb-2">Getuige Details</h4>
+                    <p>Haal details op van een specifieke getuige.</p>
+                    <pre class="bg-light p-3 rounded"><code>GET /api/witnesses/{id}</code></pre>
+                </div>
+            </div>
 
+            <div class="col-md-6">
+                <div class="bg-white p-4 rounded shadow border-police">
+                    <h4 class="fw-semibold mb-2">Personen Overzicht</h4>
+                    <p>Haal een lijst op van alle geregistreerde personen.</p>
+                    <pre class="bg-light p-3 rounded"><code>GET /api/people</code></pre>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="bg-white p-4 rounded shadow border-police">
+                    <h4 class="fw-semibold mb-2">Persoon Details</h4>
+                    <p>Haal details op van een specifieke persoon.</p>
+                    <pre class="bg-light p-3 rounded"><code>GET /api/people/{id}</code></pre>
+                </div>
             </div>
         </div>
     </section>
