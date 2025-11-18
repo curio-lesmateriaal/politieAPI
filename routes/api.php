@@ -8,26 +8,29 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::get('investigations', function() {
-    return Investigation::with('investigator')->get();
-});
+// All API routes require API key authentication
+Route::middleware('api.key')->group(function () {
+    Route::get('investigations', function() {
+        return Investigation::with('investigator')->get();
+    });
 
-Route::get('investigations/{id}', function($id) {
-    return Investigation::with('investigator', 'witnesses', 'people')->findOrFail($id);
-});
+    Route::get('investigations/{id}', function($id) {
+        return Investigation::with('investigator', 'witnesses', 'people')->findOrFail($id);
+    });
 
-Route::get('witnesses', function() {
-    return \App\Models\Witness::all();
-});
+    Route::get('witnesses', function() {
+        return \App\Models\Witness::all();
+    });
 
-Route::get('witnesses/{id}', function($id) {
-    return \App\Models\Witness::findOrFail($id);
-});
+    Route::get('witnesses/{id}', function($id) {
+        return \App\Models\Witness::findOrFail($id);
+    });
 
-Route::get('people', function() {
-    return \App\Models\People::all();
-});
+    Route::get('people', function() {
+        return \App\Models\People::all();
+    });
 
-Route::get('people/{id}', function($id) {
-    return \App\Models\People::findOrFail($id);
+    Route::get('people/{id}', function($id) {
+        return \App\Models\People::findOrFail($id);
+    });
 });

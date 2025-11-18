@@ -11,6 +11,7 @@ from typing import Optional, Dict, Any
 
 # API Configuration
 API_BASE_URL = "http://politieapi.test/api"  # Change this to match your Laravel server URL
+API_KEY = ""  # Set your API key here or use menu option 8 to configure it
 
 # Colors for terminal output
 class Colors:
@@ -51,9 +52,20 @@ def print_header():
 
 def make_request(endpoint: str) -> Optional[Dict[Any, Any]]:
     """Make a GET request to the API"""
+    global API_KEY
+    
+    if not API_KEY:
+        print(f"{Colors.RED}❌ Error: API key is not configured{Colors.END}")
+        print(f"{Colors.YELLOW}💡 Please set your API key using menu option 8{Colors.END}")
+        return None
+    
     try:
         url = f"{API_BASE_URL}/{endpoint}"
-        response = requests.get(url, timeout=5)
+        headers = {
+            'X-API-Key': API_KEY,
+            'Accept': 'application/json'
+        }
+        response = requests.get(url, headers=headers, timeout=5)
         response.raise_for_status()
         return response.json()
     except requests.exceptions.ConnectionError:
@@ -64,10 +76,17 @@ def make_request(endpoint: str) -> Optional[Dict[Any, Any]]:
         print(f"{Colors.RED}❌ Error: Request timed out{Colors.END}")
         return None
     except requests.exceptions.HTTPError as e:
-        if e.response.status_code == 404:
+        if e.response.status_code == 401:
+            error_data = e.response.json() if e.response.content else {}
+            error_msg = error_data.get('error', 'Unauthorized')
+            print(f"{Colors.RED}❌ Error: {error_msg}{Colors.END}")
+            print(f"{Colors.YELLOW}💡 Check your API key - it may be invalid or expired{Colors.END}")
+        elif e.response.status_code == 404:
             print(f"{Colors.RED}❌ Error: Resource not found{Colors.END}")
         else:
-            print(f"{Colors.RED}❌ Error: HTTP {e.response.status_code}{Colors.END}")
+            error_data = e.response.json() if e.response.content else {}
+            error_msg = error_data.get('error', f'HTTP {e.response.status_code}')
+            print(f"{Colors.RED}❌ Error: {error_msg}{Colors.END}")
         return None
     except Exception as e:
         print(f"{Colors.RED}❌ Error: {str(e)}{Colors.END}")
@@ -219,20 +238,27 @@ def show_menu():
     print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.WHITE}5.{Colors.END} List all people                {Colors.BOLD}{Colors.CYAN}║{Colors.END}")
     print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.WHITE}6.{Colors.END} Get person by ID               {Colors.BOLD}{Colors.CYAN}║{Colors.END}")
     print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.WHITE}7.{Colors.END} Change API URL                {Colors.BOLD}{Colors.CYAN}║{Colors.END}")
+    print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.WHITE}8.{Colors.END} Set API Key                   {Colors.BOLD}{Colors.CYAN}║{Colors.END}")
     print(f"{Colors.BOLD}{Colors.CYAN}║{Colors.END}  {Colors.WHITE}0.{Colors.END} Exit                          {Colors.BOLD}{Colors.CYAN}║{Colors.END}")
     print(f"{Colors.BOLD}{Colors.CYAN}╚════════════════════════════════════════╝{Colors.END}\n")
 
 def main():
     """Main application loop"""
-    global API_BASE_URL
-
+    global API_BASE_URL, API_KEY
+    
     # Clear screen and show header
     import os
     os.system('cls' if os.name == 'nt' else 'clear')
     print_header()
-
+    
     print(f"{Colors.GREEN}🚔 Welcome to the Politie API Lookup Console!{Colors.END}")
-    print(f"{Colors.YELLOW}📡 API Base URL: {Colors.BOLD}{API_BASE_URL}{Colors.END}\n")
+    print(f"{Colors.YELLOW}📡 API Base URL: {Colors.BOLD}{API_BASE_URL}{Colors.END}")
+    if API_KEY:
+        masked_key = API_KEY[:4] + '*' * (len(API_KEY) - 8) + API_KEY[-4:] if len(API_KEY) > 8 else '*' * len(API_KEY)
+        print(f"{Colors.YELLOW}🔑 API Key: {Colors.BOLD}{masked_key}{Colors.END}")
+    else:
+        print(f"{Colors.RED}🔑 API Key: {Colors.BOLD}Not configured{Colors.END} {Colors.YELLOW}(Use option 8 to set){Colors.END}")
+    print()
 
     while True:
         show_menu()
@@ -264,6 +290,14 @@ def main():
             if new_url:
                 API_BASE_URL = new_url
                 print(f"{Colors.GREEN}✅ API URL updated to: {API_BASE_URL}{Colors.END}")
+        elif choice == '8':
+            new_key = input(f"{Colors.CYAN}Enter API key: {Colors.END}").strip()
+            if new_key:
+                API_KEY = new_key
+                masked_key = API_KEY[:4] + '*' * (len(API_KEY) - 8) + API_KEY[-4:] if len(API_KEY) > 8 else '*' * len(API_KEY)
+                print(f"{Colors.GREEN}✅ API key updated: {masked_key}{Colors.END}")
+            else:
+                print(f"{Colors.YELLOW}⚠️  API key cannot be empty{Colors.END}")
         else:
             print(f"{Colors.RED}❌ Invalid choice. Please try again.{Colors.END}")
 
